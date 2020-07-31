@@ -29,6 +29,10 @@
     "jest": "^26.2.1",
     "nodemon": "^2.0.4",
     "ts-jest": "^26.1.4",
-    "ts-node": "^8.10.2"
+    "ts-loader": "^8.0.1",
+    "ts-node": "^8.10.2",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12",
+    "webpack-node-externals": "^2.5.0"
   }
 }
