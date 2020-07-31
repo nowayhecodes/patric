@@ -2,8 +2,9 @@
   "name": "patric",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/backend/server/index.ts",
   "scripts": {
+    "start:dev": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec 'ts-node' src/backend/server/index.ts",
     "test": "jest"
   },
   "keywords": [],
@@ -21,6 +22,7 @@
     "express": "^4.17.1",
     "helmet": "^3.23.3",
     "morgan": "^1.10.0",
+    "reflect-metadata": "^0.1.13",
     "typescript": "^3.9.7"
   },
   "devDependencies": {
