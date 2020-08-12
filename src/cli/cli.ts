@@ -1,6 +1,6 @@
 import yargs, { Arguments, check } from 'yargs';
 import { cpus } from 'os';
-import { fork, isMaster, isWorker, worker } from 'cluster';
+import * as cluster from 'cluster';
 
 const argv: Arguments = yargs
   .command('start', 'Start the application', {
@@ -17,6 +17,12 @@ const argv: Arguments = yargs
     choices: ['dev', 'stage', 'prod'],
     default: 'dev',
   })
+  .option('port', {
+    alias: 'p',
+    description: 'Sets up the port to run',
+    type: 'number',
+    default: 5555,
+  })
   .option('cluster', {
     alias: 'c',
     description:
@@ -32,6 +38,23 @@ const argv: Arguments = yargs
   .help()
   .alias('help', 'h').argv;
 
-if (argv.mode) {
-  console.log('Running in development mode');
+console.group('CLI parameters:');
+console.log(`MODE: ${argv.mode}`);
+console.log(`CLUSTER?: ${argv.cluster}`);
+console.log(`PORT: ${argv.port}`);
+console.groupEnd();
+
+if (argv.cluster) {
+  if (cluster.isMaster) {
+    console.log(`Master process pid ${process.pid} is running`);
+
+    for (let i = 0; i < cpus.length; i++) {
+      cluster.fork();
+    }
+
+    cluster.on('exit', (worker, code, signal) => {
+      cluster.fork();
+    });
+  } else {
+  }
 }
