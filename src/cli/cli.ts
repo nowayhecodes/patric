@@ -1,6 +1,7 @@
-import yargs, { Arguments, check } from 'yargs';
-import { cpus } from 'os';
-import * as cluster from 'cluster';
+import path from 'path';
+
+import yargs, { Arguments } from 'yargs';
+import pm2 from 'pm2';
 
 const argv: Arguments = yargs
   .command('start', 'Start the application', {
@@ -9,26 +10,6 @@ const argv: Arguments = yargs
       alias: 's',
       type: 'string',
     },
-  })
-  .option('mode', {
-    alias: 'm',
-    description: 'Specify the mode to start',
-    type: 'string',
-    choices: ['dev', 'stage', 'prod'],
-    default: 'dev',
-  })
-  .option('port', {
-    alias: 'p',
-    description: 'Sets up the port to run',
-    type: 'number',
-    default: 5555,
-  })
-  .option('cluster', {
-    alias: 'c',
-    description:
-      'Indicates wether you want to run the application in cluster mode',
-    type: 'boolean',
-    default: false,
   })
   .option('ui', {
     description: 'Pass true if you want to start with the web interface',
@@ -39,22 +20,23 @@ const argv: Arguments = yargs
   .alias('help', 'h').argv;
 
 console.group('CLI parameters:');
-console.log(`MODE: ${argv.mode}`);
-console.log(`CLUSTER?: ${argv.cluster}`);
-console.log(`PORT: ${argv.port}`);
+console.log(`START?: ${argv._.includes('start')}`);
 console.groupEnd();
 
-if (argv.cluster) {
-  if (cluster.isMaster) {
-    console.log(`Master process pid ${process.pid} is running`);
-
-    for (let i = 0; i < cpus.length; i++) {
-      cluster.fork();
+if (argv._.includes('start')) {
+  pm2.start(
+    {
+      script: path.resolve(__dirname, '../backend/server/index.js'),
+      name: 'Patric REST',
+      exec_mode: 'cluster',
+      instances: 0,
+      watch: true,
+      output: '../../logs/out.log',
+      error: '../../logs/err.log',
+    },
+    (err, apps) => {
+      pm2.disconnect();
+      if (err) throw err;
     }
-
-    cluster.on('exit', (worker, code, signal) => {
-      cluster.fork();
-    });
-  } else {
-  }
+  );
 }

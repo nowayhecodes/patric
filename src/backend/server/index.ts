@@ -4,7 +4,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import morgan from 'morgan';
 
-const app = express();
+export const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 app.use(helmet());
@@ -17,12 +17,10 @@ app.get('/applications', (req: Request, res: Response, next: NextFunction) => {
 app.post(
   '/register/application',
   (req: Request, res: Response, next: NextFunction) => {
-    res
-      .status(201)
-      .json({ status: 'success', message: req.body.message });
+    res.status(201).json({ status: 'success', message: req.body.message });
   }
 );
 
-app.listen(6543, () => {
-  console.info('Patric is running on port 6543');
-});
+app.listen(5555, '0.0.0.0', () =>
+  console.log(`Patric is running on port 5555`)
+);
